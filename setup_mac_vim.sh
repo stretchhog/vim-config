@@ -14,6 +14,7 @@ fi
 # install fonts
 cd ~/Library/Fonts && curl -fLo "Sauce Code Pro Nerd Font Complete" https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/SourceCodePro/Regular/complete/Sauce%20Code%20Pro%20Nerd%20Font%20Complete.ttf
 
+cd ~
 # install pathogen and vundle
 mkdir -p ~/.vim/autoload ~/.vim/bundle; \
 curl -Sso ~/.vim/autoload/pathogen.vim \
@@ -22,8 +23,8 @@ curl -Sso ~/.vim/autoload/pathogen.vim \
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
 # clone vimrc and install vundle plugins
-git clone https://github.com/stretchhog/vim-config.git
+git clone https://github.com/stretchhog/vim-config.git ~/vim-config
 
-cp vim-config/.vimrc ~/.vimrc
+cp ~/vim-config/.vimrc ~/.vimrc
 
 mvim +PluginInstall +qall

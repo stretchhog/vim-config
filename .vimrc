@@ -22,7 +22,7 @@ set hlsearch
 set autoindent		" always set autoindenting on
 colorscheme solarized
 set guifont=Sauce\ Code\ Pro\ Nerd\ Font\ Complete:h12
-if strftime("%H") < 18 && strftime("%H") > 9
+if strftime("%H") < 17 && strftime("%H") > 8
 	set background=light
 else
 	set background=dark
@@ -112,7 +112,7 @@ map <c-l> <c-w>l
 " beginning en end of line
 nnoremap H ^
 nnoremap L $
-nnoremap S :so %<cr>
+nnoremap <c-S> :so %<cr>
 
 " space to toggle folds
 nnoremap <space> za
@@ -123,6 +123,8 @@ vnoremap < <gv
 vnoremap > >gv
 
 nmap <F8> :TagbarToggle<CR>
+
+nnoremap <silent> <leader>l :nohl<CR>
 "}}}1 
 " plugins - vundle {{{1
 " ====================================================================================
@@ -130,37 +132,49 @@ filetype plugin indent off
 call vundle#begin('~/.vim/bundle')
 Plugin 'gmarik/Vundle.vim'
 
+" Basics
 Plugin 'myusuf3/numbers.vim'
 Plugin 'xolox/vim-misc'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'tpope/vim-sensible'
+Plugin 'tpope/vim-surround'
 
+" Git
 Plugin 'tpope/vim-fugitive'
 Plugin 'airblade/vim-gitgutter'
 
+" Workflow
 Plugin 'vim-airline/vim-airline'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'Xuyuanp/nerdtree-git-plugin'
-Plugin 'jistr/vim-nerdtree-tabs'
+"Plugin 'jistr/vim-nerdtree-tabs'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'ryanoasis/vim-devicons'
+Plugin 'xolox/vim-notes'
+Plugin 'vimwiki/vimwiki'
+Plugin 'godlygeek/tabular'
 
-Plugin 'altercation/vim-colors-solarized'
+" Code
 Plugin 'kien/rainbow_parentheses.vim'
 Plugin 'Yggdroot/indentLine'
 Plugin 'xolox/vim-easytags'
-Plugin 'tpope/vim-sensible'
 Plugin 'majutsushi/tagbar'
 Plugin 'Shougo/neocomplete.vim' 
 Plugin 'scrooloose/syntastic'
-Plugin 'xolox/vim-notes'
-Plugin 'scrooloose/nerdcommenter'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 
-Plugin 'jalvesaq/Nvim-R'
-Plugin 'ryanoasis/vim-devicons'
+" Scala
+Plugin 'derekwyatt/vim-scala'
 
-Plugin 'OmniSharp/omnisharp-vim'
-Plugin 'OrangeT/vim-csharp'
-Plugin 'tpope/vim-dispatch'
+" Python
+Plugin 'davidhalter/jedi-vim'
+
+" Markdown
+Plugin 'suan/vim-instant-markdown'
+Plugin 'Rykka/riv.vim'
+Plugin 'Rykka/InstantRst'
 
 call vundle#end()
 filetype plugin indent on
@@ -169,9 +183,7 @@ filetype plugin indent on
 
 " ctrl-p {{{2
 let g:ctrlp_max_files=0
-set wildignore+=\\tmp*
 set wildignore+=*\\target\\*
-set wildignore+=*\\config\\*
 set wildignore+=*zip,*exe,*iml,*log,*jar,*jobs,*story,*launch,*epf,*war,*bat,*fla,*class,*lck,*applescript,*pdf,*pyc,*jar,*md5,*sha1,*h
 let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
 if executable('ag')
@@ -181,7 +193,7 @@ set smartcase
 "}}}2 
 " nerdtree {{{2
 silent! map <F3> :NERDTreeFind<CR>
-let g:NERDTreeMapActivateNode="<F3>"
+let g:NERDTreeToggle="<F3>"
 let g:NERDTreeDirArrows=1
 
 
@@ -213,17 +225,25 @@ inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<tab>"
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 autocmd FileType cs setlocal omnifunc=OmniSharp#Complete
+
+autocmd FileType python setlocal omnifunc=jedi#completions
+let g:jedi#completions_enabled = 0
+let g:jedi#auto_vim_configuration = 0
 
 if !exists('g:neocomplete#sources#omni#input_patterns')
   let g:neocomplete#sources#omni#input_patterns = {}
 endif
 let g:neocomplete#sources#omni#input_patterns.cs = '.*[^=\);]'
-
-
+if !exists('g:neocomplete#force_omni_input_patterns')
+  let g:neocomplete#force_omni_input_patterns = {}
+endif
+let g:neocomplete#force_omni_input_patterns.python = '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
 "}}}2
+" InstantRst {{{2
+let g:instant_rst_browser="chrome"
+"}}}
 " nerdcommenter {{{2
 " Add spaces after comment delimiters by default
  let g:NERDSpaceDelims = 1
@@ -257,6 +277,15 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+
+augroup filetype_sbt
+  autocmd!
+  autocmd BufNewFile,BufRead *.sbt set filetype=sbt
+  autocmd FileType sbt setlocal syntax=scala
+augroup END
+
+let g:syntastic_javascript_checkers = ['jshint']
+nmap <F2> :lnext<CR>
 
 "}}}2
 " omnisharp {{{2
@@ -298,6 +327,9 @@ augroup omnisharp_commands
 augroup END
 "2}}}
 
-let g:nerdtree_tabs_open_on_console_startup=1
+let g:nerdtree_tabs_open_on_console_startup=0
 "}}}1 
-
+" Filetype specific {{{1
+:autocmd FileType python,html,htmldjango,scala setlocal foldmethod=indent
+:autocmd FileType python,html,htmldjango,scala normal zR
+"}}}1

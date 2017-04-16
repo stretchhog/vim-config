@@ -23,7 +23,7 @@ curl -Sso ~/.vim/autoload/pathogen.vim \
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
 # clone vimrc and install vundle plugins
-git clone https://github.com/stretchhog/vim-config.git ~/vim-config
+git clone https://github.com/timvancann/vim-config.git ~/vim-config
 
 cp ~/vim-config/.vimrc ~/.vimrc
 

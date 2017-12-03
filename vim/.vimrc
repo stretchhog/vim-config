@@ -5,12 +5,15 @@ set foldmethod=marker
 " startup settings {{{1
 set columns=240
 set lines=48
-set shiftwidth=4
+set shiftwidth=2
 set tabstop=4
+set expandtab
 set title
 set number
 set nocompatible
 set visualbell
+set linebreak
+set norelativenumber
 
 let mapleader=","
 
@@ -20,13 +23,15 @@ set clipboard=unnamed
 syntax on
 set hlsearch
 set autoindent		" always set autoindenting on
-colorscheme solarized
-set guifont=Sauce\ Code\ Pro\ Nerd\ Font\ Complete:h12
-if strftime("%H") < 17 && strftime("%H") > 8
-	set background=light
-else
-	set background=dark
-endif
+set termguicolors
+colorscheme one
+set background=dark
+set guifont=Sauce\ Code\ Pro\ Nerd\ Font\ Complete:h14
+"if strftime("%H") < 17 && strftime("%H") > 8
+"	set background=light
+"else
+"	set background=dark
+"endif
 
 set t_Co=256
 
@@ -133,11 +138,14 @@ call vundle#begin('~/.vim/bundle')
 Plugin 'gmarik/Vundle.vim'
 
 " Basics
-Plugin 'myusuf3/numbers.vim'
 Plugin 'xolox/vim-misc'
-Plugin 'altercation/vim-colors-solarized'
+Plugin 'rakr/vim-one'
 Plugin 'tpope/vim-sensible'
-Plugin 'tpope/vim-surround'
+Plugin 'machakann/vim-sandwich'
+
+" Writing
+Plugin '907th/vim-auto-save'
+Plugin 'beloglazov/vim-online-thesaurus'
 
 " Git
 Plugin 'tpope/vim-fugitive'
@@ -148,32 +156,29 @@ Plugin 'vim-airline/vim-airline'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'Xuyuanp/nerdtree-git-plugin'
-"Plugin 'jistr/vim-nerdtree-tabs'
-Plugin 'scrooloose/nerdcommenter'
 Plugin 'ryanoasis/vim-devicons'
 Plugin 'xolox/vim-notes'
-Plugin 'vimwiki/vimwiki'
 Plugin 'godlygeek/tabular'
 
 " Code
-Plugin 'kien/rainbow_parentheses.vim'
-Plugin 'Yggdroot/indentLine'
+Plugin 'luochen1990/rainbow'
 Plugin 'xolox/vim-easytags'
 Plugin 'majutsushi/tagbar'
 Plugin 'Shougo/neocomplete.vim' 
-Plugin 'scrooloose/syntastic'
+"Plugin 'scrooloose/syntastic'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
+Plugin 'scrooloose/nerdcommenter'
 
 " Scala
 Plugin 'derekwyatt/vim-scala'
+Plugin 'ktvoelker/sbt-vim'
 
 " Python
-Plugin 'davidhalter/jedi-vim'
+"Plugin 'davidhalter/jedi-vim'
 
 " Markdown
 Plugin 'suan/vim-instant-markdown'
-Plugin 'Rykka/riv.vim'
 Plugin 'Rykka/InstantRst'
 
 call vundle#end()
@@ -199,12 +204,13 @@ let g:NERDTreeDirArrows=1
 
 "}}}2 
 " easytags {{{2
-:set tags=./tags;
+set tags=./tags;,tags;
 :let g:easytags_dynamic_files = 1
 "}}}2 
 " airline {{{2
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 2
+let g:airline_theme='one'
 "}}}2 
 " ultisnips {{{2
 let g:UltiSnipsEditSplit="horizontal"
@@ -327,6 +333,9 @@ augroup omnisharp_commands
 augroup END
 "2}}}
 
+nnoremap <leader>t :OnlineThesaurusCurrentWord<CR>
+let g:notes_directories = ['~/.vim/bundle/vim-notes/misc/notes/user/', '~/Google Drive/Notes']
+let g:auto_save = 1
 let g:nerdtree_tabs_open_on_console_startup=0
 "}}}1 
 " Filetype specific {{{1
